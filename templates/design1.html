@@ -3,39 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{DOMAIN}} - Домен продається</title>
+    <title>{{DOMAIN}} - Купити домен</title>
     <style>
-        body {
-            margin: 0; padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f9fafb; color: #111827;
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; text-align: center;
-        }
-        .container {
-            max-width: 600px; padding: 40px 20px;
-            background: #ffffff; border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        h1 { font-size: 2.5rem; margin-bottom: 10px; word-break: break-all; color: #4f46e5; }
-        p { font-size: 1.1rem; color: #4b5563; line-height: 1.5; margin-bottom: 30px; }
+        body { margin: 0; font-family: system-ui, sans-serif; background: #f9fafb; color: #111827; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+        .container { max-width: 500px; width: 90%; padding: 40px; background: white; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        h1 { font-size: 2.5rem; margin: 0; color: #4f46e5; word-break: break-all; }
         .price { font-size: 1.5rem; font-weight: bold; color: #10b981; margin: 20px 0; }
-        .btn {
-            display: inline-block; padding: 12px 24px;
-            background-color: #4f46e5; color: white;
-            text-decoration: none; border-radius: 8px; font-weight: 600;
-            transition: background-color 0.2s;
-        }
-        .btn:hover { background-color: #4338ca; }
+        .ai-pitch { font-style: italic; color: #6b7280; font-size: 0.95rem; margin-bottom: 30px; min-height: 1.5em; }
+        .btn { display: block; width: 100%; padding: 15px; background: #4f46e5; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1.1rem; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 380px; text-align: left; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        .submit-btn { width: 100%; background: #10b981; color: white; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .status { display: none; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>{{DOMAIN}}</h1>
-        <p>Цей домен був зареєстрований безкоштовно, але оскільки я зробив це першим, він належить мені.</p>
-        <div class="price">Вартість передачі: всього $2</div>
-        <p>Ідеальне коротке ім'я для вашого наступного проекту. Готові забрати його?</p>
-        <a href="mailto:{{EMAIL}}?subject=Купівля домену {{DOMAIN}}" class="btn">Купити домен за $2</a>
+        <h1 id="domainName">{{DOMAIN}}</h1>
+        <div class="price">{{PRICE}}</div>
+        <div id="aiPitch" class="ai-pitch">Аналізуємо потенціал домену...</div>
+        <button class="btn" onclick="openM()">Забрати домен</button>
     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content" id="mBody">
+            <h3 style="margin-top:0">Купити {{DOMAIN}}</h3>
+            <form id="form">
+                <label>Ваш контакт (TG/Email)</label>
+                <input type="text" id="contact" required placeholder="@username або email">
+                <label>Повідомлення</label>
+                <textarea id="msg" rows="3"></textarea>
+                <button type="submit" class="submit-btn" id="sBtn">Надіслати запит</button>
+            </form>
+        </div>
+        <div class="modal-content status" id="mStatus">
+            <div style="font-size:3rem">✅</div>
+            <h3>Готово!</h3>
+            <p>Я зв'яжуся з вами найближчим часом.</p>
+            <button class="submit-btn" onclick="closeM()">Закрити</button>
+        </div>
+    </div>
+
+    <script>
+        function openM() { document.getElementById('modal').style.display='flex'; }
+        function closeM() { document.getElementById('modal').style.display='none'; document.getElementById('mStatus').style.display='none'; document.getElementById('mBody').style.display='block'; }
+        
+        // AI Pitch
+        fetch('/api/ai', {method:'POST'}).then(r=>r.json()).then(d=>{
+            document.getElementById('aiPitch').innerText = d.text || "Ідеальне ім'я для вашого майбутнього проекту.";
+        }).catch(()=> document.getElementById('aiPitch').innerText = "");
+
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('sBtn');
+            btn.disabled = true;
+            try {
+                await fetch('{{WEBHOOK}}', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        domain: "{{DOMAIN}}",
+                        contact: document.getElementById('contact').value,
+                        message: document.getElementById('msg').value,
+                        price: "{{PRICE}}"
+                    })
+                });
+                document.getElementById('mBody').style.display = 'none';
+                document.getElementById('mStatus').style.display = 'block';
+            } catch(e) { alert('Помилка'); btn.disabled = false; }
+        };
+    </script>
 </body>
 </html>

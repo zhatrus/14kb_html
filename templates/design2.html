@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{DOMAIN}} :: Зарезервовано</title>
+    <title>{{DOMAIN}} :: Reserved</title>
     <style>
         body {
             margin: 0; padding: 20px;
@@ -12,6 +12,9 @@
             display: flex; flex-direction: column; justify-content: center;
             min-height: 100vh; box-sizing: border-box;
         }
+        .lang-nav { position: absolute; top: 20px; right: 20px; font-size: 0.9rem; }
+        .lang-nav span { cursor: pointer; opacity: 0.5; }
+        .lang-nav span.active { opacity: 1; text-decoration: underline; }
         .terminal {
             max-width: 800px; margin: 0 auto; width: 100%;
             border: 1px solid #333; padding: 30px; border-radius: 5px;
@@ -19,26 +22,119 @@
         }
         .prompt::before { content: "root@server:~# "; color: #a3a3a3; }
         h1 { font-size: 2rem; margin: 0 0 20px 0; font-weight: normal; }
-        p { font-size: 1.2rem; line-height: 1.6; margin: 10px 0; }
         .highlight { color: #eab308; }
         .blink { animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
-        a {
+        button {
             color: #0a0a0a; background-color: #22c55e;
-            text-decoration: none; padding: 5px 15px; font-weight: bold;
-            display: inline-block; margin-top: 20px;
+            border: none; padding: 10px 20px; font-weight: bold;
+            font-family: inherit; cursor: pointer; margin-top: 20px;
         }
-        a:hover { background-color: #16a34a; }
+        button:hover { background-color: #16a34a; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        [data-lang="en"] { display: none; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-content {
+            background: #111; border: 1px solid #22c55e; padding: 20px; width: 90%; max-width: 400px;
+        }
+        input, textarea {
+            width: 100%; background: #000; border: 1px solid #333; color: #22c55e;
+            padding: 10px; margin: 10px 0; font-family: inherit; box-sizing: border-box;
+        }
+        input:focus, textarea:focus { border-color: #22c55e; outline: none; }
+        .close-btn { color: #ef4444; cursor: pointer; float: right; }
+        .status-msg { display: none; text-align: center; color: #22c55e; }
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <div class="prompt">ping {{DOMAIN}}</div>
-        <h1>ДОМЕН <span class="highlight">{{DOMAIN}}</span> ЗАРЕЗЕРВОВАНО</h1>
-        <p>Статус: <span class="highlight">Очікує власника</span></p>
-        <p>Деталі: Домен було отримано безкоштовно. Права на використання передаються за символічну плату.</p>
-        <p>Ціна: <span class="highlight">$2.00 USD</span></p>
-        <a href="mailto:{{EMAIL}}?subject=Buy {{DOMAIN}}">Ініціювати транзакцію_</a><span class="blink">█</span>
+    <div class="lang-nav">
+        <span class="active" onclick="L('uk')">UA</span> | <span onclick="L('en')">EN</span>
     </div>
+    <div class="terminal">
+        <div class="prompt">status {{DOMAIN}}</div>
+        <h1><span class="highlight">{{DOMAIN}}</span></h1>
+        
+        <div data-lang="uk">
+            <p>Статус: <span class="highlight">Зарезервовано</span></p>
+            <p>Ціна за права: <span class="highlight">{{PRICE}}</span></p>
+            <button onclick="O()">Ініціювати_транзакцію</button>
+        </div>
+
+        <div data-lang="en">
+            <p>Status: <span class="highlight">Reserved</span></p>
+            <p>Transfer price: <span class="highlight">{{PRICE}}</span></p>
+            <button onclick="O()">Initiate_transaction</button>
+        </div>
+        <span class="blink">█</span>
+    </div>
+
+    <div id="m" class="modal">
+        <div class="modal-content">
+            <div id="f-body">
+                <span class="close-btn" onclick="C()">[X]</span>
+                <p id="mt">Введіть контактні дані:</p>
+                <form id="f">
+                    <input type="text" id="c" required placeholder="Email / Telegram">
+                    <textarea id="msg" rows="3" placeholder="Message"></textarea>
+                    <button type="submit" id="s">SEND_DATA</button>
+                </form>
+            </div>
+            <div id="f-status" class="status-msg">
+                <p>SUCCESS: Data transmitted.</p>
+                <p>CONNECTION_CLOSED.</p>
+                <button onclick="C()">RETURN_TO_TERMINAL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK = '{{WEBHOOK}}';
+        let currentLang = 'uk';
+
+        function L(l){
+            currentLang = l;
+            document.querySelectorAll('[data-lang]').forEach(e=>e.style.display='none');
+            document.querySelectorAll(`[data-lang="${l}"]`).forEach(e=>e.style.display='block');
+            document.querySelectorAll('.lang-nav span').forEach(s=>s.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('mt').innerText = l === 'uk' ? 'Введіть контактні дані:' : 'Enter contact details:';
+        }
+
+        function O(){ 
+            document.getElementById('m').style.display='flex'; 
+            document.getElementById('f-body').style.display='block';
+            document.getElementById('f-status').style.display='none';
+        }
+        function C(){ document.getElementById('m').style.display='none'; }
+        
+        document.getElementById('f').onsubmit = async (e) => {
+            e.preventDefault();
+            const b = document.getElementById('s');
+            b.disabled = true;
+            b.innerText = 'UPLOADING...';
+            try {
+                await fetch(WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        domain: "{{DOMAIN}}",
+                        contact: document.getElementById('c').value,
+                        message: document.getElementById('msg').value,
+                        price: "{{PRICE}}"
+                    })
+                });
+                document.getElementById('f-body').style.display='none';
+                document.getElementById('f-status').style.display='block';
+            } catch (err) { 
+                alert('CRITICAL_ERROR: Webhook unreachable.'); 
+                b.disabled = false;
+                b.innerText = 'RETRY_SEND';
+            }
+        };
+    </script>
 </body>
 </html>

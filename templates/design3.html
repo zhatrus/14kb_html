@@ -3,45 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Придбати {{DOMAIN}}</title>
+    <title>{{DOMAIN}} - Buy Now</title>
     <style>
         body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+            margin: 0; padding: 0; font-family: sans-serif;
+            background: linear-gradient(135deg, #FF416C, #FF4B2B);
+            background-size: 200% 200%; animation: bg 10s infinite;
             color: white; display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; text-align: center;
+            min-height: 100vh; text-align: center; perspective: 1000px; overflow: hidden;
         }
-        .content { max-width: 700px; padding: 40px 20px; }
-        h1 { font-size: 3.5rem; margin: 0 0 10px 0; word-wrap: break-word; letter-spacing: -1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .subtitle { font-size: 1.5rem; font-weight: 300; margin-bottom: 40px; opacity: 0.9; }
+        @keyframes bg { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        .lang { position: fixed; top: 20px; cursor: pointer; z-index: 100; font-weight: bold; }
         .card {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
             padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 30px;
+            transition: transform 0.1s; transform-style: preserve-3d;
+            max-width: 400px; width: 90%;
         }
-        .price-tag { font-size: 3rem; font-weight: 800; margin: 10px 0; }
+        .price { font-size: 3rem; font-weight: 800; transform: translateZ(50px); margin: 15px 0; }
         .btn {
-            display: inline-block; padding: 15px 40px; font-size: 1.2rem;
-            background-color: white; color: #FF416C; text-decoration: none;
-            border-radius: 50px; font-weight: bold; text-transform: uppercase;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s;
+            display: inline-block; padding: 15px 40px; background: white; color: #FF416C;
+            border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem;
         }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.2); }
+        [data-lang="en"] { display: none; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center; z-index: 200;
+        }
+        .modal-c {
+            background: white; color: #333; padding: 30px; border-radius: 20px; 
+            width: 90%; max-width: 350px; text-align: left; position: relative;
+        }
+        input, textarea {
+            width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd;
+            border-radius: 10px; box-sizing: border-box; font-family: inherit;
+        }
+        .s-btn {
+            width: 100%; background: #FF416C; color: white; border: none;
+            padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;
+        }
+        .status-msg {
+            display: none; text-align: center; padding: 20px;
+        }
+        .status-msg.active { display: block; }
+        .status-icon { font-size: 3rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
+    <div class="lang" onclick="toggle()">UA / EN</div>
     <div class="content">
         <h1>{{DOMAIN}}</h1>
-        <div class="subtitle">Цей домен може стати вашим прямо зараз.</div>
-        
         <div class="card">
-            <p style="font-size: 1.1rem; margin-top: 0;">Домен зареєстровано першим, але ви можете отримати його за ціною чашки кави.</p>
-            <div class="price-tag">$2</div>
-            <p style="margin-bottom: 0; opacity: 0.8;">Швидке переоформлення.</p>
+            <div data-lang="uk">
+                <p>Забрав першим. Віддам за ціною кави.</p>
+                <div class="price">{{PRICE}}</div>
+                <button class="btn" onclick="openM()">КУПИТИ</button>
+            </div>
+            <div data-lang="en">
+                <p>Claimed it first. Yours for a coffee.</p>
+                <div class="price">{{PRICE}}</div>
+                <button class="btn" onclick="openM()">BUY NOW</button>
+            </div>
         </div>
-
-        <a href="mailto:{{EMAIL}}?subject={{DOMAIN}}" class="btn">Написати власнику</a>
     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-c">
+            <div id="form-content">
+                <h3 id="t">Ваші контакти</h3>
+                <form id="form">
+                    <input type="text" id="contact" placeholder="Email / Telegram" required>
+                    <textarea id="msg" placeholder="Message" rows="2"></textarea>
+                    <button type="submit" class="s-btn" id="sb">SEND</button>
+                    <p onclick="closeM()" style="text-align:center; font-size:0.8rem; cursor:pointer; margin-top:10px; color:#999">CLOSE</p>
+                </form>
+            </div>
+            
+            <div id="success-msg" class="status-msg">
+                <div class="status-icon">✅</div>
+                <h3 id="st">Надіслано!</h3>
+                <p id="sd">Я зв'яжуся з вами найближчим часом.</p>
+                <button class="s-btn" onclick="closeM()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK = '{{WEBHOOK}}';
+        let cur = 'uk';
+        
+        function toggle() {
+            cur = cur === 'uk' ? 'en' : 'uk';
+            document.querySelectorAll('[data-lang]').forEach(e => e.style.display = 'none');
+            document.querySelectorAll(`[data-lang="${cur}"]`).forEach(e => e.style.display = 'block');
+            document.getElementById('t').innerText = cur === 'uk' ? 'Ваші контакти' : 'Your contacts';
+            document.getElementById('st').innerText = cur === 'uk' ? 'Надіслано!' : 'Sent!';
+            document.getElementById('sd').innerText = cur === 'uk' ? 'Я зв\'яжуся з вами найближчим часом.' : 'I will contact you soon.';
+        }
+
+        function openM() { 
+            document.getElementById('modal').style.display = 'flex'; 
+            document.getElementById('form-content').style.display = 'block';
+            document.getElementById('success-msg').classList.remove('active');
+        }
+
+        function closeM() { document.getElementById('modal').style.display = 'none'; }
+
+        const card = document.querySelector('.card');
+        document.onmousemove = (e) => {
+            let x = (window.innerWidth/2 - e.pageX)/20;
+            let y = (window.innerHeight/2 - e.pageY)/20;
+            card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        };
+
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('sb');
+            btn.disabled = true;
+            try {
+                await fetch(WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        domain: "{{DOMAIN}}",
+                        contact: document.getElementById('contact').value,
+                        message: document.getElementById('msg').value,
+                        price: "{{PRICE}}"
+                    })
+                });
+                document.getElementById('form-content').style.display = 'none';
+                document.getElementById('success-msg').classList.add('active');
+            } catch(e) { 
+                alert('Error connecting to webhook'); 
+            } finally { btn.disabled = false; }
+        };
+    </script>
 </body>
 </html>
