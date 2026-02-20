@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{DOMAIN}} - Домен продається</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb; color: #111827;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; text-align: center;
+        }
+        .container {
+            max-width: 600px; padding: 40px 20px;
+            background: #ffffff; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; word-break: break-all; color: #4f46e5; }
+        p { font-size: 1.1rem; color: #4b5563; line-height: 1.5; margin-bottom: 30px; }
+        .price { font-size: 1.5rem; font-weight: bold; color: #10b981; margin: 20px 0; }
+        .btn {
+            display: inline-block; padding: 12px 24px;
+            background-color: #4f46e5; color: white;
+            text-decoration: none; border-radius: 8px; font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn:hover { background-color: #4338ca; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{DOMAIN}}</h1>
+        <p>Цей домен був зареєстрований безкоштовно, але оскільки я зробив це першим, він належить мені.</p>
+        <div class="price">Вартість передачі: всього $2</div>
+        <p>Ідеальне коротке ім'я для вашого наступного проекту. Готові забрати його?</p>
+        <a href="mailto:{{EMAIL}}?subject=Купівля домену {{DOMAIN}}" class="btn">Купити домен за $2</a>
+    </div>
+</body>
+</html>
