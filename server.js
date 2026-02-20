@@ -6,7 +6,7 @@ const path = require('path');
 const PORT = 3001;
 const CONFIG = {
     price: '$10',
-    webhookUrl: 'https://n8n.voka.pp.ua/webhook/ed8e5f25-7b0e-4bba-8334-80f9bedf1463'
+    webhookUrl: 'https://your-webhook-url.com/incoming'
 };
 
 const templatesDir = path.join(__dirname, 'templates');
