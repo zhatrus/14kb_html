@@ -6,39 +6,47 @@ Ultra-lightweight domain landing page server that serves random design templates
 
 - **Ultra-lightweight**: Total size under 14KB for instant loading
 - **Random templates**: Serves different design templates on each page refresh
-- **Environment configuration**: Configurable via environment variables
+- **Zero dependencies**: Works with vanilla Node.js only
 - **Multi-language support**: Ukrainian/English language switching
 - **Responsive design**: Works on all devices
 - **Form submissions**: Webhook integration for contact forms
 
 ## Quick Start
 
-1. Copy environment configuration:
+1. Configure your settings in `server.js`:
+   - `PORT`: Server port (default: 3001)
+   - `CONFIG.price`: Domain price (default: '$10')
+   - `CONFIG.webhookUrl`: Your webhook endpoint for form submissions
+
+2. Run the server:
    ```bash
-   cp .env.example .env
+   node server.js
    ```
 
-2. Configure your settings in `.env`:
-   - `PORT`: Server port (default: 3000)
-   - `PRICE`: Domain price (default: $2)
-   - `WEBHOOK_URL`: Your webhook endpoint for form submissions
-
-3. Install dependencies and run:
-   ```bash
-   npm install
-   npm start
-   ```
+3. Open http://localhost:3001 in your browser
 
 ## Project Structure
 
 ```
-├── server.js          # Main server file
+├── server.js          # Main server file with configuration
 ├── templates/         # HTML templates
 │   ├── design1.html   # Minimal design
 │   ├── design2.html   # Terminal-style design
 │   └── design3.html   # Gradient card design
-├── .env.example       # Environment variables template
 └── README.md          # This file
+```
+
+## Configuration
+
+Edit configuration directly in `server.js`:
+
+```javascript
+// КОНФІГУРАЦІЯ
+const PORT = 3001;
+const CONFIG = {
+    price: '$10',
+    webhookUrl: 'https://your-webhook-url.com/incoming'
+};
 ```
 
 ## Templates
@@ -89,9 +97,11 @@ Form submissions send POST requests to your webhook URL with JSON payload:
 
 The server is designed for easy deployment on any Node.js hosting platform:
 
-1. Set environment variables in your hosting environment
+1. Update configuration in `server.js` with your settings
 2. Deploy the code
 3. The server will start automatically
+
+No dependencies required - just vanilla Node.js!
 
 ## License
 

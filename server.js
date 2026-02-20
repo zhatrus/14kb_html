@@ -2,12 +2,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
-
-// ЦЕНТРАЛЬНИЙ КОНФІГ
+// КОНФІГУРАЦІЯ
+const PORT = 3001;
 const CONFIG = {
-    price: process.env.PRICE || '$2',
-    webhookUrl: process.env.WEBHOOK_URL || 'https://your-webhook-url.com/incoming'
+    price: '$10',
+    webhookUrl: 'https://n8n.voka.pp.ua/webhook/ed8e5f25-7b0e-4bba-8334-80f9bedf1463'
 };
 
 const templatesDir = path.join(__dirname, 'templates');
