@@ -5,50 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{DOMAIN}} - Buy Now</title>
     <style>
-        body {
-            margin: 0; padding: 0; font-family: sans-serif;
-            background: linear-gradient(135deg, #FF416C, #FF4B2B);
-            background-size: 200% 200%; animation: bg 10s infinite;
-            color: white; display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; text-align: center; perspective: 1000px; overflow: hidden;
-        }
-        @keyframes bg { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-        .lang { position: fixed; top: 20px; cursor: pointer; z-index: 100; font-weight: bold; }
-        .card {
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
-            transition: transform 0.1s; transform-style: preserve-3d;
-            max-width: 400px; width: 90%;
-        }
-        .price { font-size: 3rem; font-weight: 800; transform: translateZ(50px); margin: 15px 0; }
-        .btn {
-            display: inline-block; padding: 15px 40px; background: white; color: #FF416C;
-            border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem;
-        }
-        [data-lang="en"] { display: none; }
-
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
-            align-items: center; justify-content: center; z-index: 200;
-        }
-        .modal-c {
-            background: white; color: #333; padding: 30px; border-radius: 20px; 
-            width: 90%; max-width: 350px; text-align: left; position: relative;
-        }
-        input, textarea {
-            width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd;
-            border-radius: 10px; box-sizing: border-box; font-family: inherit;
-        }
-        .s-btn {
-            width: 100%; background: #FF416C; color: white; border: none;
-            padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer;
-        }
-        .status-msg {
-            display: none; text-align: center; padding: 20px;
-        }
-        .status-msg.active { display: block; }
-        .status-icon { font-size: 3rem; margin-bottom: 10px; }
+        body{margin:0;padding:0;font-family:sans-serif;background:linear-gradient(135deg,#FF416C,#FF4B2B);background-size:200% 200%;animation:bg 10s infinite;color:white;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;perspective:1000px;overflow:hidden}@keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}.lang{position:fixed;top:20px;cursor:pointer;z-index:100;font-weight:bold}.card{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:30px;border-radius:20px;border:1px solid rgba(255,255,255,0.2);transition:transform 0.1s;transform-style:preserve-3d;max-width:400px;width:90%}.price{font-size:3rem;font-weight:800;transform:translateZ(50px);margin:15px 0}.btn{display:inline-block;padding:15px 40px;background:white;color:#FF416C;border:none;border-radius:50px;font-weight:bold;cursor:pointer;font-size:1.1rem}[data-lang="en"]{display:none}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(5px);align-items:center;justify-content:center;z-index:200}.modal-c{background:white;color:#333;padding:30px;border-radius:20px;width:90%;max-width:350px;text-align:left;position:relative}input,textarea{width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box;font-family:inherit}.s-btn{width:100%;background:#FF416C;color:white;border:none;padding:15px;border-radius:10px;font-weight:bold;cursor:pointer}.status-msg{display:none;text-align:center;padding:20px}.status-msg.active{display:block}.status-icon{font-size:3rem;margin-bottom:10px}
     </style>
 </head>
 <body>
@@ -94,51 +51,15 @@
         const WEBHOOK = '{{WEBHOOK}}';
         let cur = 'uk';
         
-        function toggle() {
-            cur = cur === 'uk' ? 'en' : 'uk';
-            document.querySelectorAll('[data-lang]').forEach(e => e.style.display = 'none');
-            document.querySelectorAll(`[data-lang="${cur}"]`).forEach(e => e.style.display = 'block');
-            document.getElementById('t').innerText = cur === 'uk' ? 'Ваші контакти' : 'Your contacts';
-            document.getElementById('st').innerText = cur === 'uk' ? 'Надіслано!' : 'Sent!';
-            document.getElementById('sd').innerText = cur === 'uk' ? 'Я зв\'яжуся з вами найближчим часом.' : 'I will contact you soon.';
-        }
+        function toggle(){cur=cur==='uk'?'en':'uk';document.querySelectorAll('[data-lang]').forEach(e=>e.style.display='none');document.querySelectorAll(`[data-lang="${cur}"]`).forEach(e=>e.style.display='block');document.getElementById('t').innerText=cur==='uk'?'Ваші контакти':'Your contacts';document.getElementById('st').innerText=cur==='uk'?'Надіслано!':'Sent!';document.getElementById('sd').innerText=cur==='uk'?'Я зв\'яжуся з вами найближчим часом.':'I will contact you soon.'}
 
-        function openM() { 
-            document.getElementById('modal').style.display = 'flex'; 
-            document.getElementById('form-content').style.display = 'block';
-            document.getElementById('success-msg').classList.remove('active');
-        }
+        function openM(){document.getElementById('modal').style.display='flex';document.getElementById('form-content').style.display='block';document.getElementById('success-msg').classList.remove('active')}
 
-        function closeM() { document.getElementById('modal').style.display = 'none'; }
+        function closeM(){document.getElementById('modal').style.display='none'}
 
-        const card = document.querySelector('.card');
-        document.onmousemove = (e) => {
-            let x = (window.innerWidth/2 - e.pageX)/20;
-            let y = (window.innerHeight/2 - e.pageY)/20;
-            card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-        };
+        const card=document.querySelector('.card');document.onmousemove=(e)=>{let x=(window.innerWidth/2-e.pageX)/20;let y=(window.innerHeight/2-e.pageY)/20;card.style.transform=`rotateY(${x}deg) rotateX(${y}deg)`};
 
-        document.getElementById('form').onsubmit = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('sb');
-            btn.disabled = true;
-            try {
-                await fetch(WEBHOOK, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        domain: "{{DOMAIN}}",
-                        contact: document.getElementById('contact').value,
-                        message: document.getElementById('msg').value,
-                        price: "{{PRICE}}"
-                    })
-                });
-                document.getElementById('form-content').style.display = 'none';
-                document.getElementById('success-msg').classList.add('active');
-            } catch(e) { 
-                alert('Error connecting to webhook'); 
-            } finally { btn.disabled = false; }
-        };
+        document.getElementById('form').onsubmit=async(e)=>{e.preventDefault();const btn=document.getElementById('sb');btn.disabled=true;try{await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domain:"{{DOMAIN}}",contact:document.getElementById('contact').value,message:document.getElementById('msg').value,price:"{{PRICE}}"})});document.getElementById('form-content').style.display='none';document.getElementById('success-msg').classList.add('active')}catch(e){alert('Error connecting to webhook')}finally{btn.disabled=false}};
     </script>
 </body>
 </html>

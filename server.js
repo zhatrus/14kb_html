@@ -6,9 +6,8 @@ const PORT = process.env.PORT || 3000;
 
 // ЦЕНТРАЛЬНИЙ КОНФІГ
 const CONFIG = {
-    price: '$2',
-    webhookUrl: 'https://your-webhook-url.com/incoming',
-    apiKey: '' // Gemini API Key
+    price: process.env.PRICE || '$2',
+    webhookUrl: process.env.WEBHOOK_URL || 'https://your-webhook-url.com/incoming'
 };
 
 const templatesDir = path.join(__dirname, 'templates');
